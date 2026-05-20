@@ -119,16 +119,50 @@ const resultSummary = document.getElementById("result-summary");
 const resultEvidence = document.getElementById("result-evidence");
 const resultActions = document.getElementById("result-actions");
 const runWorkflowButton = document.getElementById("run-workflow");
+const generateReportButton = document.getElementById("generate-report");
+const refreshIncidentsButton = document.getElementById("refresh-incidents");
 const replayTerminalButton = document.getElementById("replay-terminal");
 const commandText = document.getElementById("command-text");
 const overlayScore = document.getElementById("overlay-score");
+const navItems = document.querySelectorAll(".nav-item");
+const segmentButtons = document.querySelectorAll(".segment");
+const statTasks = document.getElementById("stat-tasks");
+const statClosed = document.getElementById("stat-closed");
+const toast = document.createElement("div");
+toast.className = "toast";
+document.body.appendChild(toast);
 
 let selectedIncidentId = incidents[0].id;
+let workflowMode = "auto";
+let refreshCount = 0;
+let toastTimer;
 const commandVariants = [
   "codex run incident-triage --ticket INC-2048 --mode analyst",
   "agent graph resolve --logs ci-3812 --rules integrity-guard --verify",
   "security flow replay --from alert --to patch-plan --confidence high",
 ];
+
+function flashElement(element) {
+  if (!element) return;
+  element.classList.remove("is-flashing");
+  void element.offsetWidth;
+  element.classList.add("is-flashing");
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 2200);
+}
+
+function appendTerminalLine(line) {
+  const row = document.createElement("div");
+  row.className = "terminal-line";
+  row.textContent = line;
+  terminalLog.appendChild(row);
+  terminalLog.scrollTop = terminalLog.scrollHeight;
+}
 
 function renderIncidentList() {
   incidentList.innerHTML = "";
@@ -153,12 +187,14 @@ function renderIncidentList() {
     button.addEventListener("click", () => {
       selectedIncidentId = incident.id;
       renderAll();
+      flashElement(document.querySelector(".result-panel"));
+      showToast(`已载入 ${incident.id}`);
     });
     incidentList.appendChild(button);
   });
 }
 
-function renderWorkflow(activeIndex = 2) {
+function renderWorkflow(activeIndex = workflowMode === "manual" ? 4 : 2) {
   workflowRail.innerHTML = "";
   workflowSteps.forEach((step, index) => {
     const item = document.createElement("div");
@@ -211,6 +247,11 @@ function replayTerminal() {
   });
 }
 
+function handleReplayTerminal() {
+  replayTerminal();
+  showToast("终端事件已重播");
+}
+
 function cycleCommandRibbon() {
   let active = 0;
   let charIndex = 0;
@@ -241,6 +282,54 @@ function renderAll() {
   renderWorkflow();
   renderTimeline(incident);
   renderResult(incident);
+}
+
+function selectNavItem(activeItem) {
+  navItems.forEach((item) => item.classList.toggle("is-active", item === activeItem));
+  const section = document.getElementById(activeItem.dataset.section);
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    flashElement(section);
+    showToast(`已切换到${activeItem.textContent.trim()}`);
+  }
+}
+
+function refreshIncidents() {
+  refreshCount += 1;
+  incidents.push(incidents.shift());
+  selectedIncidentId = incidents[0].id;
+  statTasks.textContent = String(18 + refreshCount);
+  statClosed.textContent = String(11 + (refreshCount % 3));
+  renderAll();
+  appendTerminalLine(`[sync] incident queue refreshed, ${incidents.length} active packages loaded`);
+  flashElement(document.querySelector(".incidents-panel"));
+  showToast("任务队列已刷新");
+}
+
+function setWorkflowMode(mode) {
+  workflowMode = mode;
+  segmentButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.mode === mode));
+  renderWorkflow(mode === "manual" ? 4 : 2);
+  appendTerminalLine(mode === "manual" ? "[control] manual gate enabled" : "[control] autonomous workflow resumed");
+  flashElement(document.querySelector(".workflow-panel"));
+  showToast(mode === "manual" ? "已切换到人工复核" : "已切换到自动推进");
+}
+
+function generateReport() {
+  const incident = incidents.find((item) => item.id === selectedIncidentId) ?? incidents[0];
+  appendTerminalLine(`[report] ${incident.id} handling summary generated`);
+  const timelineItem = document.createElement("div");
+  timelineItem.className = "timeline-item";
+  timelineItem.innerHTML = `
+    <div class="timeline-time">Now</div>
+    <div class="timeline-copy">
+      <strong>生成处置报告</strong>
+      <span>已汇总关键证据、自动建议、验证清单和复核结论。</span>
+    </div>
+  `;
+  timeline.prepend(timelineItem);
+  flashElement(document.querySelector(".timeline-panel"));
+  showToast(`${incident.id} 处置报告已生成`);
 }
 
 function drawThreatCanvas() {
@@ -342,9 +431,15 @@ function runWorkflow() {
     }, stepIndex * 900);
   });
   replayTerminal();
+  flashElement(document.querySelector(".workflow-panel"));
+  showToast("研判流程已启动");
 }
 
-replayTerminalButton.addEventListener("click", replayTerminal);
+navItems.forEach((item) => item.addEventListener("click", () => selectNavItem(item)));
+segmentButtons.forEach((button) => button.addEventListener("click", () => setWorkflowMode(button.dataset.mode)));
+replayTerminalButton.addEventListener("click", handleReplayTerminal);
+refreshIncidentsButton.addEventListener("click", refreshIncidents);
+generateReportButton.addEventListener("click", generateReport);
 runWorkflowButton.addEventListener("click", runWorkflow);
 
 renderAll();

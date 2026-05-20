@@ -84,18 +84,18 @@
             <h2>安全研发与告警研判 Agent 工作台</h2>
           </div>
           <div class="topbar-actions">
-            <button class="ghost-button">
+            <button class="ghost-button" id="generate-report" type="button">
               <span class="icon" data-lucide="sparkles"></span>
               <span>生成处置报告</span>
             </button>
-            <button class="primary-button" id="run-workflow">
+            <button class="primary-button" id="run-workflow" type="button">
               <span class="icon" data-lucide="play"></span>
               <span>执行一次研判流程</span>
             </button>
           </div>
         </header>
 
-        <section class="signal-strip">
+        <section class="signal-strip" id="overview">
           <article class="signal-card">
             <p class="eyebrow">Live Operations</p>
             <strong>04 Agents Active</strong>
@@ -132,7 +132,7 @@
         </section>
 
         <section class="hero-grid">
-          <article class="hero-panel">
+          <article class="hero-panel" id="agents">
             <div class="panel-head">
               <div>
                 <p class="eyebrow">核心场景</p>
@@ -192,7 +192,7 @@
             </div>
           </article>
 
-          <article class="preview-panel">
+          <article class="preview-panel" id="evidence">
             <div class="panel-head">
               <div>
                 <p class="eyebrow">动态视图</p>
@@ -222,13 +222,13 @@
         </section>
 
         <section class="workspace-grid">
-          <article class="panel incidents-panel">
+          <article class="panel incidents-panel" id="incidents">
             <div class="panel-head">
               <div>
                 <p class="eyebrow">任务队列</p>
                 <h3>高优先级研判任务</h3>
               </div>
-              <button class="icon-button" aria-label="刷新任务">
+              <button class="icon-button" id="refresh-incidents" type="button" aria-label="刷新任务">
                 <span class="icon" data-lucide="refresh-ccw"></span>
               </button>
             </div>
@@ -242,8 +242,8 @@
                 <h3>多 Agent 推进链路</h3>
               </div>
               <div class="segmented">
-                <button class="segment is-active">自动</button>
-                <button class="segment">人工复核</button>
+                <button class="segment is-active" type="button" data-mode="auto">自动</button>
+                <button class="segment" type="button" data-mode="manual">人工复核</button>
               </div>
             </div>
             <div class="workflow-rail" id="workflow-rail"></div>
