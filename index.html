@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentinel Flow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">SF</div>
+          <div>
+            <p class="eyebrow">AI Security Agent</p>
+            <h1>Sentinel Flow</h1>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item is-active" data-section="overview">
+            <span class="icon" data-lucide="layout-dashboard"></span>
+            <span>总览</span>
+          </button>
+          <button class="nav-item" data-section="incidents">
+            <span class="icon" data-lucide="shield-alert"></span>
+            <span>告警研判</span>
+          </button>
+          <button class="nav-item" data-section="agents">
+            <span class="icon" data-lucide="bot"></span>
+            <span>Agent 编排</span>
+          </button>
+          <button class="nav-item" data-section="evidence">
+            <span class="icon" data-lucide="file-search"></span>
+            <span>证据分析</span>
+          </button>
+        </nav>
+
+        <section class="sidebar-section">
+          <div class="section-title">
+            <span>运行状态</span>
+            <span class="status-pill">
+              <span class="status-dot"></span>
+              在线
+            </span>
+          </div>
+          <dl class="mini-stats">
+            <div>
+              <dt>今日任务</dt>
+              <dd id="stat-tasks">18</dd>
+            </div>
+            <div>
+              <dt>自动闭环</dt>
+              <dd id="stat-closed">11</dd>
+            </div>
+            <div>
+              <dt>平均推理链</dt>
+              <dd>7 steps</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="sidebar-section sidebar-terminal">
+          <div class="section-title">
+            <span>最近终端事件</span>
+            <button class="icon-button" id="replay-terminal" aria-label="重播终端日志">
+              <span class="icon" data-lucide="rotate-cw"></span>
+            </button>
+          </div>
+          <div class="terminal-log" id="terminal-log"></div>
+        </section>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Enterprise Security Operations Console</p>
+            <h2>安全研发与告警研判 Agent 工作台</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="ghost-button">
+              <span class="icon" data-lucide="sparkles"></span>
+              <span>生成处置报告</span>
+            </button>
+            <button class="primary-button" id="run-workflow">
+              <span class="icon" data-lucide="play"></span>
+              <span>执行一次研判流程</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="signal-strip">
+          <article class="signal-card">
+            <p class="eyebrow">Live Operations</p>
+            <strong>04 Agents Active</strong>
+            <div class="sparkline sparkline-cyan">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </article>
+          <article class="signal-card">
+            <p class="eyebrow">Long Context</p>
+            <strong>1.2M Window Ready</strong>
+            <div class="sparkline sparkline-green">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </article>
+          <article class="signal-card">
+            <p class="eyebrow">Evidence Assets</p>
+            <strong>Dashboard + Terminal + Flow</strong>
+            <div class="sparkline sparkline-amber">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </article>
+          <article class="signal-card ticker-card">
+            <p class="eyebrow">Task Feed</p>
+            <div class="ticker-window">
+              <div class="ticker-track" id="ticker-track">
+                <span>Repo diff indexed</span>
+                <span>Alert graph linked</span>
+                <span>Rule patch drafted</span>
+                <span>Verifier ready</span>
+                <span>Workflow package ready</span>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="hero-grid">
+          <article class="hero-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">核心场景</p>
+                <h3>从告警接入到验证闭环</h3>
+              </div>
+              <div class="tag-row">
+                <span class="tag">长上下文分析</span>
+                <span class="tag">多 Agent 协作</span>
+                <span class="tag">安全研发</span>
+              </div>
+            </div>
+            <div class="command-ribbon">
+              <div class="command-line">
+                <span class="command-prompt">&gt;</span>
+                <span id="command-text">codex run incident-triage --ticket INC-2048 --mode analyst</span>
+              </div>
+              <div class="command-badges">
+                <span class="tag tag-accent">Repo Scan</span>
+                <span class="tag">Log Correlation</span>
+                <span class="tag">Patch Planning</span>
+              </div>
+            </div>
+            <p class="hero-copy">
+              这个工作台用于安全团队使用 Agent 处理真实任务的流程：接收高优先级告警、解析代码与日志上下文、生成规则与修复建议、执行验证并输出最终决策。
+            </p>
+
+            <div class="hero-metrics">
+              <div class="metric-card">
+                <span>单次任务上下文</span>
+                <strong>684K tokens</strong>
+                <small>代码、日志、规则库联合分析</small>
+              </div>
+              <div class="metric-card">
+                <span>工具调用</span>
+                <strong>14 actions</strong>
+                <small>Repo / Log / Rule / Test 编排</small>
+              </div>
+              <div class="metric-card">
+                <span>节省人工耗时</span>
+                <strong>72%</strong>
+                <small>从初筛到复核的平均效率提升</small>
+              </div>
+            </div>
+            <div class="hero-footer-stats">
+              <div>
+                <span>RISK SCORE</span>
+                <strong>0.91</strong>
+              </div>
+              <div>
+                <span>ACTION QUEUE</span>
+                <strong>14</strong>
+              </div>
+              <div>
+                <span>PATCH CONFIDENCE</span>
+                <strong>97%</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="preview-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">动态视图</p>
+                <h3>攻击链热区</h3>
+              </div>
+              <span class="tag tag-accent">实时更新</span>
+            </div>
+            <div class="preview-shell">
+              <canvas id="threat-canvas" width="620" height="320" aria-label="攻击链热区画布"></canvas>
+              <div class="preview-overlay">
+                <div class="overlay-card">
+                  <span class="overlay-label">THREAT FLOW</span>
+                  <strong id="overlay-score">91 / 100</strong>
+                  <small>多信号聚合后的当前风险指数</small>
+                </div>
+                <div class="overlay-card overlay-card-compact">
+                  <span class="overlay-label">AGENT STATE</span>
+                  <div class="overlay-list">
+                    <span><i class="overlay-dot overlay-dot-green"></i> Context Builder</span>
+                    <span><i class="overlay-dot overlay-dot-cyan"></i> Log Correlator</span>
+                    <span><i class="overlay-dot overlay-dot-amber"></i> Verifier</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <article class="panel incidents-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">任务队列</p>
+                <h3>高优先级研判任务</h3>
+              </div>
+              <button class="icon-button" aria-label="刷新任务">
+                <span class="icon" data-lucide="refresh-ccw"></span>
+              </button>
+            </div>
+            <div class="incident-list" id="incident-list"></div>
+          </article>
+
+          <article class="panel workflow-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">流程编排</p>
+                <h3>多 Agent 推进链路</h3>
+              </div>
+              <div class="segmented">
+                <button class="segment is-active">自动</button>
+                <button class="segment">人工复核</button>
+              </div>
+            </div>
+            <div class="workflow-rail" id="workflow-rail"></div>
+          </article>
+
+          <article class="panel result-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">输出结果</p>
+                <h3 id="result-title">等待任务选择</h3>
+              </div>
+              <span class="tag" id="result-severity">P1</span>
+            </div>
+            <div class="result-summary" id="result-summary"></div>
+            <div class="result-split">
+              <section>
+                <h4>关键证据</h4>
+                <ul class="bullet-list" id="result-evidence"></ul>
+              </section>
+              <section>
+                <h4>自动建议</h4>
+                <ul class="bullet-list" id="result-actions"></ul>
+              </section>
+            </div>
+          </article>
+        </section>
+
+        <section class="bottom-grid">
+          <article class="panel timeline-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">推理时间线</p>
+                <h3>任务执行过程</h3>
+              </div>
+            </div>
+            <div class="timeline" id="timeline"></div>
+          </article>
+
+          <article class="panel record-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">复盘资产</p>
+                <h3>本次处置记录</h3>
+              </div>
+            </div>
+            <div class="record-checklist">
+              <div class="record-item">
+                <span class="icon" data-lucide="clipboard-check"></span>
+                <div>
+                  <strong>处置摘要</strong>
+                  <p>记录风险等级、影响范围、责任模块和当前处置状态。</p>
+                </div>
+              </div>
+              <div class="record-item">
+                <span class="icon" data-lucide="git-branch"></span>
+                <div>
+                  <strong>证据链</strong>
+                  <p>关联代码差异、CI 日志、告警样本和规则命中记录。</p>
+                </div>
+              </div>
+              <div class="record-item">
+                <span class="icon" data-lucide="shield-check"></span>
+                <div>
+                  <strong>验证清单</strong>
+                  <p>沉淀回滚步骤、规则回归结果和人工复核结论。</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
